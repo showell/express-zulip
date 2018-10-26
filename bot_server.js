@@ -46,21 +46,33 @@ function run_server(process_message) {
             return;
         }
 
+        let has_replied = false;
+
+        function send_response(response) {
+            if (has_replied) {
+                console.error('Extra reply thrown on floor.');
+                return;
+            }
+
+            has_replied = true;
+
+            if (!response) {
+                const err = {response_not_required: true};
+                const encoded_err = JSON.stringify(err);
+                res.send(encoded_err);
+            }
+
+            if (response) {
+                const encoded_response = JSON.stringify(response);
+                res.send(encoded_response);
+            }
+        }
+
         const response = process_message({
             message: req.body.message,
             trigger: req.body.trigger,
+            send: send_response,
         });
-
-        if (!response) {
-            const err = {response_not_required: true};
-            const encoded_err = JSON.stringify(err);
-            res.send(encoded_err);
-        }
-
-        if (response) {
-            const encoded_response = JSON.stringify(response);
-            res.send(encoded_response);
-        }
     });
 
     app.listen(port, () => {
@@ -97,7 +109,7 @@ function make_controller() {
         listeners.push({
             regex: regex,
             triggers: triggers,
-            f: f,
+            process: f,
         });
     };
 
@@ -119,7 +131,7 @@ function make_controller() {
         }
     }
 
-    function process(opts) {
+    function process_message(opts) {
         const message = opts.message;
         var trigger = opts.trigger;
 
@@ -149,26 +161,19 @@ function make_controller() {
 
         message.text = text;
 
-        var reply;
-
         bot = {
             reply: (message, response) => {
                 // We ignore "message" since replies are implicit
                 // with the webhook, and the server takes care of that.
-                //
-                // Also, we are only allowed one reply, so the last
-                // reply wins.
-                reply = response;
+                opts.send(response);
             },
         };
 
-        listener.f(bot, message);
-
-        return reply;
+        listener.process(bot, message);
     }
 
     self.run = () => {
-        run_server(process);
+        run_server(process_message);
     };
 
     return self;

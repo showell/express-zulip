@@ -75,6 +75,17 @@ function order(bot, message) {
     }
 }
 
+function snooze(bot, message) {
+    function reply() {
+        const content = "5 seconds have passed!";
+        const response = {
+            content: content,
+        };
+        bot.reply(message, response);
+    }
+
+    setTimeout(reply, 5000);
+}
 
 function fallthru(bot, message) {
     const content = 'I do not recognize this command!';
@@ -90,9 +101,10 @@ const controller = bot_server.make_controller();
 
 controller.hears('hello', 'direct_mention', hello);
 controller.hears('echo', '', echo);
-controller.hears('', 'direct_message', fallthru);
 controller.hears('buttons', '', buttons);
 controller.hears('order', '', order);
+controller.hears('snooze', '', snooze);
+controller.hears('', 'direct_message', fallthru);
 
 controller.run();
 
