@@ -25,11 +25,10 @@ function buttons(bot, message) {
     // a list of choices that get turned into
     // buttons.
     //
-    // This requires PR #10734 to be merged,
-    // which should be the case by the time most
-    // people read this.  And then your Zulip
-    // server should be current enough to include
-    // the commit from that PR.
+    // This requires you to have Zulip version
+    // 1.9 or higher (or grab the latest master
+    // if you're reading this before 1.9 was
+    // released.)
 
     const widget_content = JSON.stringify({
         widget_type: 'zform',
