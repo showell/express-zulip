@@ -15,7 +15,7 @@ On the Zulip side:
 * Add a bot of type "Outgoing webhook"
 * Use whatever name/avatar you want for the bot.
 * For the URL, it will be something
-  similar to `http://example.org:3000
+  similar to `http://example.org:3000`
 * Mention the bot like `@**my bot** hello`
 
 ## Tokens ##
